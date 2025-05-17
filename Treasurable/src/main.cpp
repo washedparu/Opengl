@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+
 
 #include "Renderer.h"
 #include "VertexArray.h"
@@ -10,21 +10,29 @@
 #include "BufferLayout.h"
 #include "Texture.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
+
 // TODO:
-// 1-/ Abstract away te code into classes - DONE
-// 2-/ Learn about Textures - WORKING ON (On blending)
-// Shader path - DONE
+// 1-/ Learn about math in opengl - DONE
+// 2-/ More math (matrix and model view projection) - DONE
+// 3-/ Dear Imgui with opengl - (..) - SOON
+
+// I don't know where should i put this.
 
 
 int main() {
 	GLFWwindow* window;
+	int screenWidth = 1000, screenHeight = 800;
 	if (!glfwInit()) {
 		std::cout << "Couldn't initialize GLFW!\n";
 		return -1;
 	}
 	std::cout << "Initialized GLFW!\n";
 
-	window = glfwCreateWindow(1000, 800, "Treasurable", nullptr, nullptr);
+	window = glfwCreateWindow(screenWidth, screenHeight, "Treasurable", nullptr, nullptr);
 
 	if (!window) {
 		std::cout << "Couldn't initialize the window!\n";
@@ -33,6 +41,7 @@ int main() {
 
 
 	glfwMakeContextCurrent(window);
+
 	glewExperimental = GL_TRUE;
 
 	if (glewInit() != GLEW_OK) {
@@ -42,13 +51,17 @@ int main() {
 	std::cout << "initialized GLEW!\n";
 
 
-	float vertices[16] = {
-		-0.5f, -0.5f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 1.0f
+	float vertices[] = {
+		 100.0f,  100.0f,		0.0f, 0.0f, // 0
+		 400.0f,  100.0f,		1.0f, 0.0f, // 1
+		 400.0f,  300.0f,		1.0f, 1.0f, // 2
+		 100.0f,  400.0f,		0.0f, 1.0f  // 3
 	};
-	unsigned int indices[6] = { 0,1,2,2,3,0 };
+
+	unsigned int indices[6] = { 
+		0, 1, 2, 
+		2, 3, 0
+	};
 
 	// Vertex Array object
 	VertexArray vao;
@@ -60,40 +73,57 @@ int main() {
 	BufferLayout layout;
 	layout.push<float>(2);
 	layout.push<float>(2);
-
-	// Adding buffer to the vertex array
+			
+	// Passing buffer to the vertex array
 	vao.addBuffer(vbo, layout);
 
 	// Index Buffer object
 	IndexBuffer ibo(indices, 6);
 
+	// Projection matrix (orthographic projection)
+	glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight), 1.0f, -1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, .0f, 0.0f));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 500.0f, 0.0f));
+
+	glm::mat4 mvp = proj * view * model;
+
+	// Blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+
 	// Creating and using the shader
 	Shader shader("res/shaders/shader.vert", "res/shaders/shader.frag");
 	shader.Bind();
+	shader.SetUniformMat4("u_MVP", mvp);
 
-	// Loading texture
-	Texture texture = {"res/textures/paru.png"};
+
+	// Creating and loading the texture
+	Texture texture("res/textures/img.png");
 	texture.Bind(0);
 	shader.SetUniform1i("u_Texture", 0);
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
 
 	// Creating the renderer
 	Renderer renderer;
+
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int width, int height) {
 		glViewport(0, 0, width, height);
 	});
+	float time = glfwGetTime();
 
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
 
-		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
+		shader.SetUniform2f("u_Offset", std::sin(time) * 0.1f, 0.0f);
 		renderer.DrawElements(vao, ibo, shader);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;

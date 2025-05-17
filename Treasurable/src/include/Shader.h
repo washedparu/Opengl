@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 struct ShaderPath {
     std::string VertShader;
@@ -29,7 +31,7 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void SetUniform1f(const std::string& name, float f1);
+    void SetUniform1f(const std::string& name, float f);
     void SetUniform2f(const std::string& name, float f1, float f2);
     void SetUniform3f(const std::string& name, float f1, float f2, float f3);
     void SetUniform4f(const std::string& name, float f1, float f2, float f3, float f4);
@@ -39,5 +41,7 @@ public:
     void SetUniform3i(const std::string& name, int i1, int i2, int i3);
     void SetUniform4i(const std::string& name, int i1, int i2, int i3, int i4);
 
+
+    void SetUniformMat4(const std::string& name, const glm::mat4& mat);
     unsigned int GetRendererID() const;
 };

@@ -158,6 +158,7 @@
     <None Include="res\shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\textures\img.png" />
     <Image Include="res\textures\paru.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

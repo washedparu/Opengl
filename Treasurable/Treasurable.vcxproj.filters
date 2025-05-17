@@ -80,5 +80,8 @@
     <Image Include="res\textures\paru.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\img.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

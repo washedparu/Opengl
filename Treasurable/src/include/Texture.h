@@ -13,6 +13,9 @@ public:
 	void Bind(unsigned int slot) const;
 	void Unbind() const;
 
+	void SetFilePath(const std::string& path);
+
+	inline const char* GetFilePath() const { return m_FilePath.c_str(); }
 	inline int GetWidth() const { return m_Width; }
 	inline int GetHeight() const { return m_Height; }
 	inline unsigned int GetRendererID() const { return m_RendererID; }

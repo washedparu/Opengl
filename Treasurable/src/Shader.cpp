@@ -2,6 +2,7 @@
 #include "include/Shader.h"
 #include <fstream>
 #include <sstream>
+#
 
 Shader::Shader(const std::string& vertShaderPath, const std::string& fragShaderPath)
     : m_VertShaderPath(vertShaderPath), m_FragShaderPath(fragShaderPath), m_RendererID(0)
@@ -27,7 +28,7 @@ unsigned int Shader::CompileShader(const std::string& source, unsigned int type)
         std::vector<char> message(length);
         GLCall(glGetShaderInfoLog(id, length, &length, message.data()));
         std::cout << "Failed to compile {} shader " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment");
-        std::cout << "{}", message.data();
+        std::cout << message.data();
         GLCall(glDeleteShader(id));
         return 0;
     }
@@ -36,7 +37,7 @@ unsigned int Shader::CompileShader(const std::string& source, unsigned int type)
 }
 
 unsigned int Shader::CreateShader(const std::string& vertShader, const std::string& fragShader) {
-    unsigned int program = glCreateProgram();
+    unsigned int program = glCreateProgram(); 
     unsigned int vs = CompileShader(vertShader, GL_VERTEX_SHADER);
     unsigned int fs = CompileShader(fragShader, GL_FRAGMENT_SHADER);
     if (!vs || !fs) {
@@ -59,6 +60,7 @@ unsigned int Shader::CreateShader(const std::string& vertShader, const std::stri
 Shader::~Shader() {
     GLCall(glDeleteProgram(m_RendererID));
 }
+
 
 ShaderPath Shader::ReadShaderFromFile(const std::string& vertPath, const std::string& fragPath) {
     std::ifstream vertFile(vertPath);
@@ -128,6 +130,13 @@ void Shader::SetUniform4i(const std::string& name, int i1, int i2, int i3, int i
 }
 
 
+
+void Shader::SetUniformMat4(const std::string& name, const glm::mat4& mat) {
+    GLCall(glUniformMatrix4fv(GetUniformLoc(name), 1, GL_FALSE, &mat[0][0] ));;
+}
+
+
+
 unsigned int Shader::GetRendererID() const { return m_RendererID; }
 
 int Shader::GetUniformLoc(const std::string& name) {
@@ -137,7 +146,7 @@ int Shader::GetUniformLoc(const std::string& name) {
     }
     GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));  
     if (location == -1) {
-        printf("Couldn't get uniform location\n");
+        std::cout << "Couldn't get uniform location for " << name.c_str() << '\n';
         return -1;
     }
 
