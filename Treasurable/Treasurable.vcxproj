@@ -169,6 +169,7 @@
     <ClInclude Include="src\include\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="imgui.ini" />
     <None Include="res\shaders\shader.frag" />
     <None Include="res\shaders\shader.vert" />
   </ItemGroup>

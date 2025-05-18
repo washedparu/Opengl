@@ -120,6 +120,7 @@
   <ItemGroup>
     <None Include="res\shaders\shader.vert" />
     <None Include="res\shaders\shader.frag" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\paru.png">
