@@ -20,11 +20,10 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 // TODO:
-// 1-/ Learn about math in opengl - DONE
-// 2-/ More math (matrix and model view projection) - DONE
-// 3-/ Dear Imgui with opengl - (..) - SOON
-
-// I don't know where should i put this.
+// 1-/ Rendering multiple objects - WORKING ON
+// 2-/ Test framework - 
+// 3-/ Batch rendering -
+// 4-/ Getting to 3D - 
 
 
 int main() {
@@ -57,10 +56,10 @@ int main() {
 
 
 	float vertices[] = {
-		 100.0f,  100.0f,		0.0f, 0.0f, // 0
-		 300.0f,  100.0f,		1.0f, 0.0f, // 1
-		 300.0f,  300.0f,		1.0f, 1.0f, // 2
-		 100.0f,  300.0f,		0.0f, 1.0f  // 3
+		 -50.0f,  -50.0f,		0.0f, 0.0f, // 0
+		  50.0f,   -50.0f,		1.0f, 0.0f, // 1
+		  50.0f,   50.0f,		1.0f, 1.0f, // 2
+		 -50.0f,  50.0f,		0.0f, 1.0f  // 3
 	};
 
 	unsigned int indices[6] = { 
@@ -107,8 +106,7 @@ int main() {
 	// Creating the renderer
 	Renderer renderer;
 
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
+	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
 
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int width, int height) {
 		glViewport(0, 0, width, height);
@@ -123,32 +121,43 @@ int main() {
 	float time = glfwGetTime();
 	bool imGui_isOpen = true;
 
-	glm::vec3 imGui_Translation(0.0f, 0.0f, 0.0f);
+	glm::vec3 imGui_TranslationS(200.0f, 400.0f, 0.0f);
+	glm::vec3 imGui_TranslationT(300.0f, 400.0f, 0.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 		renderer.Clear();
-		
+
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 
-		shader.SetUniform2f("u_Offset",  0.1f, 0.0f);
-		renderer.DrawElements(vao, ibo, shader);
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f),imGui_Translation);
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), imGui_TranslationT);
+			glm::mat4 mvp = proj * view * model;
+			shader.Bind();	
+			shader.SetUniformMat4("u_MVP", mvp);
+			renderer.DrawElements(vao, ibo, shader);
+		}
 
-		glm::mat4 mvp = proj * view * model;
-		shader.SetUniformMat4("u_MVP", mvp);
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), imGui_TranslationS);
+			glm::mat4 mvp = proj * view * model;
+			shader.Bind();
+			shader.SetUniformMat4("u_MVP", mvp);
+			renderer.DrawElements(vao, ibo, shader);
+		}
 
-		ImGui::NewFrame();
-		
-		ImGui::Begin("Some stuff", &imGui_isOpen);
-		ImGui::Text("Frame rate: %.3f\n\n", ImGui::GetIO().Framerate);
-		
-		ImGui::Text("Translation");
-		ImGui::SliderFloat("Horizontal", &imGui_Translation.x, 0.0f, static_cast<float>(screenWidth));
 
-		ImGui::SliderFloat("Vertical", &imGui_Translation.y, 0.0f, static_cast<float>(screenHeight));
-		ImGui::End();
+		{
+			ImGui::NewFrame();
+			ImGui::Begin("Translation", &imGui_isOpen);
+
+			ImGui::Text("Frame rate: %.1f\n\n", ImGui::GetIO().Framerate);
+
+			ImGui::DragFloat2("Translation S", &imGui_TranslationS.x, 1.0f, 0.0f, static_cast<float>(screenWidth));
+			ImGui::DragFloat2("Translation T", &imGui_TranslationT.x, 1.0f, 0.0f, static_cast<float>(screenWidth));
+			ImGui::End();
+		}
 
 
 		ImGui::Render();
