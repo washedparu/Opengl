@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\BufferLayout.cpp" />
+    <ClCompile Include="src\Cube.cpp" />
     <ClCompile Include="src\include\BufferLayout.h" />
     <ClCompile Include="src\include\imgui\imgui.cpp" />
     <ClCompile Include="src\include\imgui\imgui_demo.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\include\Cube.h" />
     <ClInclude Include="src\include\debug.h" />
     <ClInclude Include="src\include\imgui\imconfig.h" />
     <ClInclude Include="src\include\imgui\imgui.h" />
@@ -170,8 +172,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="res\shaders\shader.frag" />
-    <None Include="res\shaders\shader.vert" />
+    <None Include="res\shaders\fragment.glsl" />
+    <None Include="res\shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\img.png" />
