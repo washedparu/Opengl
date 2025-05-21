@@ -178,7 +178,7 @@ int main() {
 	// toggle on/off			ImGui
 	bool cubeControls = false;
 
-	while (!glfwWindowShouldClose(window), !(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)) {
+	while (!glfwWindowShouldClose(window) || !(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)) {
 		renderer.Clear();
 
 		ImGui_ImplGlfw_NewFrame();
