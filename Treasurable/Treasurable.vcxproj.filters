@@ -135,5 +135,11 @@
     <Image Include="res\textures\img.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\textures\rust_diff.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\textures\rust_disp.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

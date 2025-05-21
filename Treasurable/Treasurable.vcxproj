@@ -178,6 +178,8 @@
   <ItemGroup>
     <Image Include="res\textures\img.png" />
     <Image Include="res\textures\paru.png" />
+    <Image Include="res\textures\rust_diff.jpg" />
+    <Image Include="res\textures\rust_disp.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
